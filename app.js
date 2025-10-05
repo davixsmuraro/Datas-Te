@@ -35,6 +35,23 @@ const btnSave = document.getElementById('btn-save');
 const btnCancel = document.getElementById('btn-cancel');
 const btnClear = document.getElementById('btn-clear');
 
+// Função para pré-preencher fins de semana com laranja
+function presetWeekendColors() {
+    calendarData.months.forEach(month => {
+        for (let day = 1; day <= month.days; day++) {
+            const dateStr = formatDate(calendarData.year, month.number, day);
+            const date = new Date(calendarData.year, month.number - 1, day);
+            const dayOfWeek = date.getDay(); // 0=domingo, 5=sexta, 6=sábado
+            
+            // Se for sexta (5), sábado (6) ou domingo (0) e não tiver cor definida
+            if ((dayOfWeek === 5 || dayOfWeek === 6 || dayOfWeek === 0) && !dateColors[dateStr]) {
+                dateColors[dateStr] = "#FFA726"; // laranja
+            }
+        }
+    });
+    persistData();
+}
+
 function renderColorOptions(current) {
     const colorOptions = document.getElementById('color-options');
     colorOptions.innerHTML = '';
@@ -92,20 +109,23 @@ function renderCalendar() {
             dayDiv.onclick = () => openModal(dateStr);
 
             if (dateNames[dateStr]) {
+                // Nome presente: fundo verde sempre
                 dayDiv.setAttribute('data-has-name', 'true');
-                dayDiv.style.backgroundColor = "#26C485"; // Verde sempre
+                dayDiv.style.backgroundColor = "#26C485";
                 dayDiv.style.color = "#fff";
                 const nameSpan = document.createElement('span');
                 nameSpan.className = 'day-name';
                 nameSpan.innerText = dateNames[dateStr];
-                nameSpan.style.color = "#777"; // Nome sempre cinza
+                nameSpan.style.color = "#777";
                 nameSpan.style.background = "transparent";
                 dayDiv.appendChild(nameSpan);
             } else if (dateColors[dateStr]) {
+                // Sem nome, mas com cor (incluindo laranja dos fins de semana)
                 dayDiv.removeAttribute('data-has-name');
                 dayDiv.style.backgroundColor = dateColors[dateStr];
                 dayDiv.style.color = "#21808d";
             } else {
+                // Sem nada: padrão
                 dayDiv.removeAttribute('data-has-name');
                 dayDiv.style.backgroundColor = "#fff";
                 dayDiv.style.color = "#21808d";
@@ -163,9 +183,18 @@ btnClear.onclick = () => {
     if (!currentSelectedDate) return;
     delete dateNames[currentSelectedDate];
     delete dateColors[currentSelectedDate];
+    // Verifica se é fim de semana para recolocar a cor laranja
+    const date = new Date(calendarData.year, parseInt(currentSelectedDate.split('-')[1]) - 1, parseInt(currentSelectedDate.split('-')[2]));
+    const dayOfWeek = date.getDay();
+    if (dayOfWeek === 5 || dayOfWeek === 6 || dayOfWeek === 0) {
+        dateColors[currentSelectedDate] = "#FFA726";
+    }
     persistData();
     closeModal();
     renderCalendar();
 };
 
-window.onload = renderCalendar;
+window.onload = () => {
+    presetWeekendColors(); // Pré-preenche fins de semana
+    renderCalendar();
+};

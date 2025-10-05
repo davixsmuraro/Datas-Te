@@ -98,7 +98,7 @@ function renderCalendar() {
                 const nameSpan = document.createElement('span');
                 nameSpan.className = 'day-name';
                 nameSpan.innerText = dateNames[dateStr];
-                nameSpan.style.color = "#fff";
+                nameSpan.style.color = "#777";
                 nameSpan.style.background = "transparent";
                 dayDiv.appendChild(nameSpan);
             } else if (dateColors[dateStr]) {
@@ -147,7 +147,6 @@ btnCancel.onclick = closeModal;
 btnSave.onclick = () => {
     if (!currentSelectedDate) return;
     const nome = nameInput.value.trim();
-    // Se inserir nome, sempre cor verde
     if (nome) {
         dateNames[currentSelectedDate] = nome;
         dateColors[currentSelectedDate] = "#26C485";

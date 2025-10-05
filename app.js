@@ -93,12 +93,12 @@ function renderCalendar() {
 
             if (dateNames[dateStr]) {
                 dayDiv.setAttribute('data-has-name', 'true');
-                dayDiv.style.backgroundColor = "#26C485";
+                dayDiv.style.backgroundColor = "#26C485"; // Verde sempre
                 dayDiv.style.color = "#fff";
                 const nameSpan = document.createElement('span');
                 nameSpan.className = 'day-name';
                 nameSpan.innerText = dateNames[dateStr];
-                nameSpan.style.color = "#777";
+                nameSpan.style.color = "#777"; // Nome sempre cinza
                 nameSpan.style.background = "transparent";
                 dayDiv.appendChild(nameSpan);
             } else if (dateColors[dateStr]) {
@@ -149,7 +149,7 @@ btnSave.onclick = () => {
     const nome = nameInput.value.trim();
     if (nome) {
         dateNames[currentSelectedDate] = nome;
-        dateColors[currentSelectedDate] = "#26C485";
+        dateColors[currentSelectedDate] = "#26C485"; // Verde sempre ao salvar nome
     } else {
         delete dateNames[currentSelectedDate];
         dateColors[currentSelectedDate] = selectedColor;

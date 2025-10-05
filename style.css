@@ -150,10 +150,27 @@ body {
     border: 1px solid #e3ecee;
     border-radius: 4px;
 }
-.form-group input[type="color"] {
-    margin-left: 8px;
-    vertical-align: middle;
+/* Cores customizadas */
+.color-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.color-btn {
+    width: 27px;
+    height: 27px;
+    border-radius: 50%;
+    border: 2px solid #aaa;
     cursor: pointer;
+    outline: none;
+    background: #fff;
+    transition: border 0.2s;
+    box-shadow: 0 1px 4px rgba(40,40,40,0.09);
+}
+
+.color-btn.selected {
+    border: 3px solid #21808d;
 }
 .modal-footer {
     display: flex;

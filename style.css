@@ -4,7 +4,6 @@ body {
     margin: 0;
     padding: 0;
 }
-
 .container {
     max-width: 1100px;
     margin: 20px auto;
@@ -13,53 +12,44 @@ body {
     border-radius: 8px;
     box-shadow: 0 8px 24px rgba(26, 104, 115, 0.07);
 }
-
 .header {
     text-align: center;
     margin-bottom: 20px;
 }
-
 .header h1 {
     margin: 6px 0 4px 0;
     color: #21808d;
 }
-
 .subtitle {
     color: #666;
 }
-
 .calendar-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 18px;
 }
-
 .month-container {
     background: #f7fbfd;
     border-radius: 6px;
     padding: 7px 3px 12px 3px;
     box-shadow: 0 2px 6px rgba(33,128,141,0.03);
 }
-
 .month-title {
     text-align: center;
     margin: 0 0 7px 0;
     color: #21808d;
     font-weight: bold;
 }
-
 .week-row, .days-row {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     margin-bottom: 3px;
 }
-
 .weekday {
     font-size: 13px;
     text-align: center;
     color: #666;
 }
-
 .day {
     height: 32px;
     margin-bottom: 3px;
@@ -73,25 +63,20 @@ body {
     position: relative;
     border: 1px solid #e3ecee;
 }
-
 .day[data-has-name="true"] {
-    background: #26C485;
     color: #fff;
     font-weight: bold;
     box-shadow: 0 1px 5px rgba(38, 196, 133, 0.07);
     border: 1px solid #26C485;
 }
-
 .day[data-custom-color] {
     border: 2px solid #333;
     color: #fff;
     font-weight: bold;
 }
-
 .day:hover {
     background: #97e4cb;
 }
-
 .day-name {
     display: block;
     font-size: 11px;
@@ -106,11 +91,9 @@ body {
     transform: translateX(-50%);
     z-index: 2;
 }
-
 .modal.hidden {
     display: none;
 }
-
 .modal {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
@@ -119,14 +102,12 @@ body {
     align-items: center;
     justify-content: center;
 }
-
 .modal-overlay {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
     background: rgba(33,128,141, 0.12);
     z-index: 51;
 }
-
 .modal-content {
     position: relative;
     background: #fff;
@@ -137,14 +118,12 @@ body {
     box-shadow: 0 12px 32px rgba(33,128,141,0.09);
     z-index: 52;
 }
-
 .modal-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 5px;
 }
-
 .modal-close {
     background: transparent;
     border: none;
@@ -152,22 +131,18 @@ body {
     color: #21808d;
     cursor: pointer;
 }
-
 .modal-body {
     margin-bottom: 11px;
 }
-
 .form-group {
     margin-bottom: 12px;
 }
-
 .form-group label {
     font-size: 14px;
     margin-bottom: 2px;
     display: block;
     color: #21808d;
 }
-
 .form-group input[type="text"] {
     width: 95%;
     padding: 7px;
@@ -175,19 +150,16 @@ body {
     border: 1px solid #e3ecee;
     border-radius: 4px;
 }
-
 .form-group input[type="color"] {
     margin-left: 8px;
     vertical-align: middle;
     cursor: pointer;
 }
-
 .modal-footer {
     display: flex;
     gap: 7px;
     justify-content: flex-end;
 }
-
 #btn-save, #btn-cancel, #btn-clear {
     background: #21808d;
     color: #fff;
@@ -198,11 +170,9 @@ body {
     cursor: pointer;
     margin-left: 5px;
 }
-
 #btn-clear {
     background: #aaa;
 }
-
 #btn-cancel {
     background: #d4e9ec;
     color: #21808d;

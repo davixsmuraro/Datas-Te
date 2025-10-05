@@ -76,12 +76,17 @@ function renderCalendar() {
         });
         monthDiv.appendChild(weekRow);
 
-        // Dias do mês, ajustando início da semana para segunda
+        // Dias do mês
         const daysRow = document.createElement('div');
         daysRow.className = 'days-row';
-        // Calcula primeiro dia
-        const jsDay = new Date(calendarData.year, month.number - 1, 1).getDay(); // 0=domingo...6=sabado
-        const firstDay = jsDay === 0 ? 6 : jsDay - 1;
+
+        // Cálculo correto para começar segunda: 
+        // JS getDay() retorna 0=domingo então:
+        // Se 0, então espaço até segunda, se 1 (segunda), nenhum espaço, etc.
+        const jsDay = new Date(calendarData.year, month.number - 1, 1).getDay();
+        let firstDay = jsDay - 1;
+        if (firstDay < 0) firstDay = 6; // Se domingo, espaço até domingo (6)
+
         for (let i = 0; i < firstDay; i++) {
             const blankDiv = document.createElement('div');
             daysRow.appendChild(blankDiv);
@@ -94,8 +99,9 @@ function renderCalendar() {
             dayDiv.innerText = day;
             dayDiv.onclick = () => openModal(dateStr);
 
-            if (dateColors[dateStr]) {
-                // Dia com cor definida
+            // --------- Correção visual ---------
+            if (dateColors[dateStr] && dateColors[dateStr] !== "#fff") {
+                // Tem cor escolhida: fundo colorido e nome branco (se houver)
                 dayDiv.classList.add('colored');
                 dayDiv.classList.remove('has-name-grey');
                 dayDiv.style.backgroundColor = dateColors[dateStr];
@@ -107,7 +113,7 @@ function renderCalendar() {
                     dayDiv.appendChild(nameSpan);
                 }
             } else if (dateNames[dateStr]) {
-                // Apenas um nome, sem cor: cinza, sem fundo
+                // Apenas nome, sem cor: fundo branco, fonte cinza
                 dayDiv.classList.add('has-name-grey');
                 dayDiv.classList.remove('colored');
                 dayDiv.style.backgroundColor = "#fff";
@@ -136,7 +142,7 @@ function openModal(dateStr) {
     currentSelectedDate = dateStr;
     modal.classList.remove('hidden');
     nameInput.value = dateNames[dateStr] || '';
-    selectedColor = dateColors[dateStr] || presetColors[0];
+    selectedColor = dateColors[dateStr] || "#fff"; // Default sem cor
     renderColorOptions(selectedColor);
     nameInput.focus();
 }
@@ -159,16 +165,14 @@ btnSave.onclick = () => {
     if (!currentSelectedDate) return;
     const nome = nameInput.value.trim();
     const cor = selectedColor;
-    // Salva o nome e cor conforme escolha
-    if (nome !== "") {
+    if (nome) {
         dateNames[currentSelectedDate] = nome;
     } else {
         delete dateNames[currentSelectedDate];
     }
-    // Salva a cor mesmo se não houver nome
-    dateColors[currentSelectedDate] = cor;
-    // Se NÃO tem nome e cor padrão, remove cor
-    if (!nome && cor === presetColors[0]) {
+    if (cor && cor !== "#fff") {
+        dateColors[currentSelectedDate] = cor;
+    } else {
         delete dateColors[currentSelectedDate];
     }
     persistData();

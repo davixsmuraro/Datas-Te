@@ -45,7 +45,6 @@ const btnSave = document.getElementById('btn-save');
 const btnCancel = document.getElementById('btn-cancel');
 const btnClear = document.getElementById('btn-clear');
 
-// Monta seleção de cores
 function renderColorOptions(current) {
     const colorOptions = document.getElementById('color-options');
     colorOptions.innerHTML = '';
@@ -103,7 +102,7 @@ function renderCalendar() {
             dayDiv.onclick = () => openModal(dateStr);
 
             if (dateNames[dateStr] || dateColors[dateStr]) {
-                dayDiv.setAttribute('data-has-name', 'true');
+                dayDiv.classList.add('colored');
                 dayDiv.style.backgroundColor = dateColors[dateStr] || presetColors[0];
                 dayDiv.style.color = "#fff";
                 if (dateNames[dateStr]) {
@@ -113,7 +112,7 @@ function renderCalendar() {
                     dayDiv.appendChild(nameSpan);
                 }
             } else {
-                dayDiv.removeAttribute('data-has-name');
+                dayDiv.classList.remove('colored');
                 dayDiv.style.backgroundColor = "#fff";
                 dayDiv.style.color = "#21808d";
             }
@@ -160,6 +159,7 @@ btnSave.onclick = () => {
     } else {
         delete dateNames[currentSelectedDate];
     }
+    // Salva a cor SEMPRE, independentemente do nome
     dateColors[currentSelectedDate] = cor;
     persistData();
     closeModal();

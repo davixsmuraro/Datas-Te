@@ -19,10 +19,10 @@ const calendarData = {
 
 const presetColors = [
     "#26C485", "#FFA726", "#EF5350", "#42A5F5", "#AB47BC",
-    "#FFEE58", "#8D6E63", "#789262", "#BDBDBD", "#37474F"
+    "#FFEE58", "#8D6E63", "#789262", "#BDBDBD", "#37474F", "#fff" // adicionado branco fácil
 ];
-let selectedColor = presetColors[0];
 
+let selectedColor = "#fff";
 let dateNames = JSON.parse(localStorage.getItem('dateNames')) || {};
 let dateColors = JSON.parse(localStorage.getItem('dateColors')) || {};
 let currentSelectedDate = null;
@@ -30,7 +30,6 @@ let currentSelectedDate = null;
 const modal = document.getElementById('modal');
 const modalOverlay = document.getElementById('modal-overlay');
 const modalClose = document.getElementById('modal-close');
-const modalTitle = document.getElementById('modal-title');
 const nameInput = document.getElementById('name-input');
 const btnSave = document.getElementById('btn-save');
 const btnCancel = document.getElementById('btn-cancel');
@@ -76,17 +75,12 @@ function renderCalendar() {
         });
         monthDiv.appendChild(weekRow);
 
-        // Dias do mês
+        // Dias do mês, correto para segunda-feira
         const daysRow = document.createElement('div');
         daysRow.className = 'days-row';
-
-        // Cálculo correto para começar segunda: 
-        // JS getDay() retorna 0=domingo então:
-        // Se 0, então espaço até segunda, se 1 (segunda), nenhum espaço, etc.
         const jsDay = new Date(calendarData.year, month.number - 1, 1).getDay();
         let firstDay = jsDay - 1;
-        if (firstDay < 0) firstDay = 6; // Se domingo, espaço até domingo (6)
-
+        if (firstDay < 0) firstDay = 6;
         for (let i = 0; i < firstDay; i++) {
             const blankDiv = document.createElement('div');
             daysRow.appendChild(blankDiv);
@@ -99,32 +93,18 @@ function renderCalendar() {
             dayDiv.innerText = day;
             dayDiv.onclick = () => openModal(dateStr);
 
-            // --------- Correção visual ---------
-            if (dateColors[dateStr] && dateColors[dateStr] !== "#fff") {
-                // Tem cor escolhida: fundo colorido e nome branco (se houver)
-                dayDiv.classList.add('colored');
-                dayDiv.classList.remove('has-name-grey');
-                dayDiv.style.backgroundColor = dateColors[dateStr];
-                dayDiv.style.color = "#fff";
-                if (dateNames[dateStr]) {
-                    const nameSpan = document.createElement('span');
-                    nameSpan.className = 'day-name';
-                    nameSpan.innerText = dateNames[dateStr];
-                    dayDiv.appendChild(nameSpan);
-                }
-            } else if (dateNames[dateStr]) {
-                // Apenas nome, sem cor: fundo branco, fonte cinza
-                dayDiv.classList.add('has-name-grey');
-                dayDiv.classList.remove('colored');
-                dayDiv.style.backgroundColor = "#fff";
-                dayDiv.style.color = "#777";
+            // Aplica cor de fundo escolhida (qualquer cor)
+            dayDiv.style.backgroundColor = dateColors[dateStr] || "#fff";
+            // Nome sempre fonte cinza SEMPRE, com fundo cor escolhida
+            if (dateNames[dateStr]) {
                 const nameSpan = document.createElement('span');
                 nameSpan.className = 'day-name';
                 nameSpan.innerText = dateNames[dateStr];
+                nameSpan.style.color = "#777";
+                nameSpan.style.background = "transparent";
                 dayDiv.appendChild(nameSpan);
+                dayDiv.style.color = "#777";
             } else {
-                dayDiv.classList.remove('colored', 'has-name-grey');
-                dayDiv.style.backgroundColor = "#fff";
                 dayDiv.style.color = "#21808d";
             }
             daysRow.appendChild(dayDiv);
@@ -142,7 +122,7 @@ function openModal(dateStr) {
     currentSelectedDate = dateStr;
     modal.classList.remove('hidden');
     nameInput.value = dateNames[dateStr] || '';
-    selectedColor = dateColors[dateStr] || "#fff"; // Default sem cor
+    selectedColor = dateColors[dateStr] || "#fff";
     renderColorOptions(selectedColor);
     nameInput.focus();
 }
@@ -170,11 +150,8 @@ btnSave.onclick = () => {
     } else {
         delete dateNames[currentSelectedDate];
     }
-    if (cor && cor !== "#fff") {
-        dateColors[currentSelectedDate] = cor;
-    } else {
-        delete dateColors[currentSelectedDate];
-    }
+    // Salva sempre a cor mesmo sem nome
+    dateColors[currentSelectedDate] = cor;
     persistData();
     closeModal();
     renderCalendar();

@@ -14,20 +14,12 @@ const calendarData = {
         {name: "Novembro", number: 11, days: 30},
         {name: "Dezembro", number: 12, days: 31}
     ],
-    weekdays: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
+    weekdays: ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"]
 };
 
 const presetColors = [
-    "#26C485", // verde
-    "#FFA726", // laranja
-    "#EF5350", // vermelho
-    "#42A5F5", // azul
-    "#AB47BC", // roxo
-    "#FFEE58", // amarelo
-    "#8D6E63", // marrom
-    "#789262", // oliva
-    "#BDBDBD", // cinza
-    "#37474F"  // grafite
+    "#26C485", "#FFA726", "#EF5350", "#42A5F5", "#AB47BC",
+    "#FFEE58", "#8D6E63", "#789262", "#BDBDBD", "#37474F"
 ];
 let selectedColor = presetColors[0];
 
@@ -35,7 +27,6 @@ let dateNames = JSON.parse(localStorage.getItem('dateNames')) || {};
 let dateColors = JSON.parse(localStorage.getItem('dateColors')) || {};
 let currentSelectedDate = null;
 
-// Elementos
 const modal = document.getElementById('modal');
 const modalOverlay = document.getElementById('modal-overlay');
 const modalClose = document.getElementById('modal-close');
@@ -74,7 +65,7 @@ function renderCalendar() {
         monthTitle.innerText = month.name;
         monthDiv.appendChild(monthTitle);
 
-        // Dias da semana
+        // Dias da semana (segunda a domingo)
         const weekRow = document.createElement('div');
         weekRow.className = 'week-row';
         calendarData.weekdays.forEach(weekday => {
@@ -85,10 +76,12 @@ function renderCalendar() {
         });
         monthDiv.appendChild(weekRow);
 
-        // Dias do mês
+        // Dias do mês, ajustando início da semana para segunda
         const daysRow = document.createElement('div');
         daysRow.className = 'days-row';
-        const firstDay = new Date(calendarData.year, month.number - 1, 1).getDay();
+        // Calcula primeiro dia
+        const jsDay = new Date(calendarData.year, month.number - 1, 1).getDay(); // 0=domingo...6=sabado
+        const firstDay = jsDay === 0 ? 6 : jsDay - 1;
         for (let i = 0; i < firstDay; i++) {
             const blankDiv = document.createElement('div');
             daysRow.appendChild(blankDiv);
@@ -101,9 +94,11 @@ function renderCalendar() {
             dayDiv.innerText = day;
             dayDiv.onclick = () => openModal(dateStr);
 
-            if (dateNames[dateStr] || dateColors[dateStr]) {
+            if (dateColors[dateStr]) {
+                // Dia com cor definida
                 dayDiv.classList.add('colored');
-                dayDiv.style.backgroundColor = dateColors[dateStr] || presetColors[0];
+                dayDiv.classList.remove('has-name-grey');
+                dayDiv.style.backgroundColor = dateColors[dateStr];
                 dayDiv.style.color = "#fff";
                 if (dateNames[dateStr]) {
                     const nameSpan = document.createElement('span');
@@ -111,8 +106,18 @@ function renderCalendar() {
                     nameSpan.innerText = dateNames[dateStr];
                     dayDiv.appendChild(nameSpan);
                 }
-            } else {
+            } else if (dateNames[dateStr]) {
+                // Apenas um nome, sem cor: cinza, sem fundo
+                dayDiv.classList.add('has-name-grey');
                 dayDiv.classList.remove('colored');
+                dayDiv.style.backgroundColor = "#fff";
+                dayDiv.style.color = "#777";
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'day-name';
+                nameSpan.innerText = dateNames[dateStr];
+                dayDiv.appendChild(nameSpan);
+            } else {
+                dayDiv.classList.remove('colored', 'has-name-grey');
                 dayDiv.style.backgroundColor = "#fff";
                 dayDiv.style.color = "#21808d";
             }
@@ -154,13 +159,18 @@ btnSave.onclick = () => {
     if (!currentSelectedDate) return;
     const nome = nameInput.value.trim();
     const cor = selectedColor;
+    // Salva o nome e cor conforme escolha
     if (nome !== "") {
         dateNames[currentSelectedDate] = nome;
     } else {
         delete dateNames[currentSelectedDate];
     }
-    // Salva a cor SEMPRE, independentemente do nome
+    // Salva a cor mesmo se não houver nome
     dateColors[currentSelectedDate] = cor;
+    // Se NÃO tem nome e cor padrão, remove cor
+    if (!nome && cor === presetColors[0]) {
+        delete dateColors[currentSelectedDate];
+    }
     persistData();
     closeModal();
     renderCalendar();

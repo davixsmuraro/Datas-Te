@@ -78,7 +78,7 @@ body {
     display: block;
     font-size: 11px;
     margin-top: -23px;
-    color: #fff !important;
+    color: #777 !important;   /* SEMPRE cinza */
     background: transparent !important;
     font-weight: normal;
     border-radius: 4px;
@@ -190,3 +190,4 @@ body {
     background: #d4e9ec;
     color: #21808d;
 }
+

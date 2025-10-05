@@ -17,6 +17,20 @@ const calendarData = {
     weekdays: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
 };
 
+const presetColors = [
+    "#26C485", // verde
+    "#FFA726", // laranja
+    "#EF5350", // vermelho
+    "#42A5F5", // azul
+    "#AB47BC", // roxo
+    "#FFEE58", // amarelo
+    "#8D6E63", // marrom
+    "#789262", // oliva
+    "#BDBDBD", // cinza
+    "#37474F"  // grafite
+];
+let selectedColor = presetColors[0];
+
 let dateNames = JSON.parse(localStorage.getItem('dateNames')) || {};
 let dateColors = JSON.parse(localStorage.getItem('dateColors')) || {};
 let currentSelectedDate = null;
@@ -27,12 +41,28 @@ const modalOverlay = document.getElementById('modal-overlay');
 const modalClose = document.getElementById('modal-close');
 const modalTitle = document.getElementById('modal-title');
 const nameInput = document.getElementById('name-input');
-const colorInput = document.getElementById('color-input');
 const btnSave = document.getElementById('btn-save');
 const btnCancel = document.getElementById('btn-cancel');
 const btnClear = document.getElementById('btn-clear');
 
-// Renderização do calendário
+// Monta seleção de cores
+function renderColorOptions(current) {
+    const colorOptions = document.getElementById('color-options');
+    colorOptions.innerHTML = '';
+    presetColors.forEach(color => {
+        const btn = document.createElement('button');
+        btn.className = 'color-btn';
+        btn.style.backgroundColor = color;
+        btn.setAttribute('type', 'button');
+        if (color === current) btn.classList.add('selected');
+        btn.onclick = () => {
+            selectedColor = color;
+            renderColorOptions(color);
+        };
+        colorOptions.appendChild(btn);
+    });
+}
+
 function renderCalendar() {
     const grid = document.getElementById('calendar-grid');
     grid.innerHTML = '';
@@ -56,7 +86,7 @@ function renderCalendar() {
         });
         monthDiv.appendChild(weekRow);
 
-        // Dias
+        // Dias do mês
         const daysRow = document.createElement('div');
         daysRow.className = 'days-row';
         const firstDay = new Date(calendarData.year, month.number - 1, 1).getDay();
@@ -69,26 +99,27 @@ function renderCalendar() {
             const dayDiv = document.createElement('div');
             dayDiv.className = 'day';
             dayDiv.dataset.date = dateStr;
-            if (dateNames[dateStr]) {
+            dayDiv.innerText = day;
+            dayDiv.onclick = () => openModal(dateStr);
+
+            if (dateNames[dateStr] || dateColors[dateStr]) {
                 dayDiv.setAttribute('data-has-name', 'true');
-                dayDiv.innerText = day;
-                const nameSpan = document.createElement('span');
-                nameSpan.className = 'day-name';
-                nameSpan.innerText = dateNames[dateStr];
-                dayDiv.appendChild(nameSpan);
-                dayDiv.style.backgroundColor = dateColors[dateStr] || "#26C485";
+                dayDiv.style.backgroundColor = dateColors[dateStr] || presetColors[0];
                 dayDiv.style.color = "#fff";
+                if (dateNames[dateStr]) {
+                    const nameSpan = document.createElement('span');
+                    nameSpan.className = 'day-name';
+                    nameSpan.innerText = dateNames[dateStr];
+                    dayDiv.appendChild(nameSpan);
+                }
             } else {
-                dayDiv.innerText = day;
                 dayDiv.removeAttribute('data-has-name');
                 dayDiv.style.backgroundColor = "#fff";
                 dayDiv.style.color = "#21808d";
             }
-            dayDiv.onclick = () => openModal(dateStr);
             daysRow.appendChild(dayDiv);
         }
         monthDiv.appendChild(daysRow);
-
         grid.appendChild(monthDiv);
     });
 }
@@ -97,12 +128,12 @@ function formatDate(year, month, day) {
     return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 }
 
-// Modal
 function openModal(dateStr) {
     currentSelectedDate = dateStr;
     modal.classList.remove('hidden');
     nameInput.value = dateNames[dateStr] || '';
-    colorInput.value = dateColors[dateStr] || "#26C485";
+    selectedColor = dateColors[dateStr] || presetColors[0];
+    renderColorOptions(selectedColor);
     nameInput.focus();
 }
 
@@ -111,7 +142,6 @@ function closeModal() {
     currentSelectedDate = null;
 }
 
-// Salvar dados no localStorage
 function persistData() {
     localStorage.setItem('dateNames', JSON.stringify(dateNames));
     localStorage.setItem('dateColors', JSON.stringify(dateColors));
@@ -124,14 +154,13 @@ btnCancel.onclick = closeModal;
 btnSave.onclick = () => {
     if (!currentSelectedDate) return;
     const nome = nameInput.value.trim();
-    const cor = colorInput.value || "#26C485";
+    const cor = selectedColor;
     if (nome !== "") {
         dateNames[currentSelectedDate] = nome;
-        dateColors[currentSelectedDate] = cor;
     } else {
         delete dateNames[currentSelectedDate];
-        delete dateColors[currentSelectedDate];
     }
+    dateColors[currentSelectedDate] = cor;
     persistData();
     closeModal();
     renderCalendar();
@@ -140,7 +169,7 @@ btnSave.onclick = () => {
 btnClear.onclick = () => {
     if (!currentSelectedDate) return;
     delete dateNames[currentSelectedDate];
-    dateColors[currentSelectedDate] = "#fff";
+    delete dateColors[currentSelectedDate];
     persistData();
     closeModal();
     renderCalendar();

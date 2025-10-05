@@ -19,7 +19,7 @@ const calendarData = {
 
 const presetColors = [
     "#26C485", "#FFA726", "#EF5350", "#42A5F5", "#AB47BC",
-    "#FFEE58", "#8D6E63", "#789262", "#BDBDBD", "#37474F", "#fff" // adicionado branco fácil
+    "#FFEE58", "#8D6E63", "#789262", "#BDBDBD", "#37474F", "#fff"
 ];
 
 let selectedColor = "#fff";
@@ -64,7 +64,6 @@ function renderCalendar() {
         monthTitle.innerText = month.name;
         monthDiv.appendChild(monthTitle);
 
-        // Dias da semana (segunda a domingo)
         const weekRow = document.createElement('div');
         weekRow.className = 'week-row';
         calendarData.weekdays.forEach(weekday => {
@@ -75,7 +74,6 @@ function renderCalendar() {
         });
         monthDiv.appendChild(weekRow);
 
-        // Dias do mês, correto para segunda-feira
         const daysRow = document.createElement('div');
         daysRow.className = 'days-row';
         const jsDay = new Date(calendarData.year, month.number - 1, 1).getDay();
@@ -93,18 +91,23 @@ function renderCalendar() {
             dayDiv.innerText = day;
             dayDiv.onclick = () => openModal(dateStr);
 
-            // Aplica cor de fundo escolhida (qualquer cor)
-            dayDiv.style.backgroundColor = dateColors[dateStr] || "#fff";
-            // Nome sempre fonte cinza SEMPRE, com fundo cor escolhida
             if (dateNames[dateStr]) {
+                dayDiv.setAttribute('data-has-name', 'true');
+                dayDiv.style.backgroundColor = "#26C485";
+                dayDiv.style.color = "#fff";
                 const nameSpan = document.createElement('span');
                 nameSpan.className = 'day-name';
                 nameSpan.innerText = dateNames[dateStr];
-                nameSpan.style.color = "#777";
+                nameSpan.style.color = "#fff";
                 nameSpan.style.background = "transparent";
                 dayDiv.appendChild(nameSpan);
-                dayDiv.style.color = "#777";
+            } else if (dateColors[dateStr]) {
+                dayDiv.removeAttribute('data-has-name');
+                dayDiv.style.backgroundColor = dateColors[dateStr];
+                dayDiv.style.color = "#21808d";
             } else {
+                dayDiv.removeAttribute('data-has-name');
+                dayDiv.style.backgroundColor = "#fff";
                 dayDiv.style.color = "#21808d";
             }
             daysRow.appendChild(dayDiv);
@@ -144,14 +147,14 @@ btnCancel.onclick = closeModal;
 btnSave.onclick = () => {
     if (!currentSelectedDate) return;
     const nome = nameInput.value.trim();
-    const cor = selectedColor;
+    // Se inserir nome, sempre cor verde
     if (nome) {
         dateNames[currentSelectedDate] = nome;
+        dateColors[currentSelectedDate] = "#26C485";
     } else {
         delete dateNames[currentSelectedDate];
+        dateColors[currentSelectedDate] = selectedColor;
     }
-    // Salva sempre a cor mesmo sem nome
-    dateColors[currentSelectedDate] = cor;
     persistData();
     closeModal();
     renderCalendar();

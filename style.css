@@ -69,6 +69,16 @@ body {
     box-shadow: 0 1px 5px rgba(38, 196, 133, 0.07);
     border: 2px solid #21808d;
 }
+.day.has-name-grey {
+    background: #fff !important;
+    color: #777 !important;
+    font-weight: normal !important;
+}
+.day.has-name-grey .day-name {
+    color: #777 !important;
+    background: transparent !important;
+    font-weight: normal !important;
+}
 .day:hover {
     background: #97e4cb;
 }

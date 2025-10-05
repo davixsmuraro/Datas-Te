@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendário de Nomes 2025</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Calendário de Nomes 2025</h1>
+            <p class="subtitle">Clique em qualquer data para adicionar um nome e escolher cor</p>
+        </header>
+        <main class="calendar-grid" id="calendar-grid">
+            <!-- Calendário gerado pelo JavaScript -->
+        </main>
+        <!-- Modal para entrada de dados -->
+        <div class="modal hidden" id="modal">
+            <div class="modal-overlay" id="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modal-title">Nome para a data</h3>
+                    <button class="modal-close" id="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="name-input">Nome:</label>
+                        <input type="text" id="name-input" maxlength="50" placeholder="Digite o nome...">
+                    </div>
+                    <div class="form-group">
+                        <label for="color-input">Cor:</label>
+                        <input type="color" id="color-input" value="#26C485">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-clear">Limpar</button>
+                    <button id="btn-cancel">Cancelar</button>
+                    <button id="btn-save">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
